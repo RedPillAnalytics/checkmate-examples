@@ -1,14 +1,3 @@
-// pluginManagement {
-//     repositories {
-//         maven {
-//             url redpillUrl
-//             credentials(AwsCredentials) {
-//                 accessKey redpillKey
-//                 secretKey redpillSecret
-//             }
-//         }
-//         gradlePluginPortal()
-//     }
-// }
+rootProject.name = 'checkmate-examples'
 
 include 'obi'
