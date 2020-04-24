@@ -44,12 +44,8 @@ services:
      - $PWD:/checkmate-examples
      # checkmate code... for testing (ignored if not there)
      - $PWD/../checkmate-obi:/checkmate-obi
-     # gradle cache
-     - $HOME/.gradle:/home/oracle/.gradle
-    # mavenLocal
-     - $HOME/.m2:/home/oracle/.m2
-     # aws credentials
-     - $HOME/.aws:/home/oracle/.aws
+     # HOME directory
+     - $HOME:/home/oracle
     user: oracle
   rcu-database:
     image: redpillanalytics/checkmate-db:18.4.0-xe

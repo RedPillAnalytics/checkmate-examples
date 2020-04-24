@@ -1,4 +1,4 @@
 plugins {
   id "com.redpillanalytics.gradle-analytics" version "1.3.0"
-  id "com.github.ben-manes.versions" version "0.27.0"
+  id "com.github.ben-manes.versions" version "0.28.0"
 }
