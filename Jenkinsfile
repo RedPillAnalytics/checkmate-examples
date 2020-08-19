@@ -1,7 +1,6 @@
 def options = '-S'
 def properties = "-PbuildId=${env.BUILD_TAG}"
 def checkmate = "./gradlew ${options} ${properties}"
-def projectDir = 'obi/sample-12c'
 
 pipeline {
   agent {
@@ -20,25 +19,36 @@ pipeline {
         // start up OBIEE while also doing the build
         parallel (
           "OBI Startup": {
-            sh "/home/oracle/fmw/config/domains/bi/bitools/bin/start.sh"
+            sh "${checkmate} startOBI"
           },
 	
-          // Build SampleAppLite
+          // build with patches
           "Build": {
-            sh "${checkmate} -p ${projectDir} featureCompare"
+            sh "${checkmate} cleanJunit featureCompare"
           }
 	
 	      ) // end of parallel function
       }
     } // end of Build and Startup stage
 
-    stage('Brokerage Regression Test') {
+    stage('Test') {
+         when { changeRequest() }
+         environment {
+            JENKINS_NODE_COOKIE = 'dontKillMe'
+         }
       steps{
         // run baseline and revision, and then register the results
-        sh "${checkmate} -p ${projectDir} featureBaselineWorkflow"
-        sh "${checkmate} -p ${projectDir} featureRevisionWorkflow"
-        junit allowEmptyResults: true, testResults: "${projectDir}/build/test-groups/*/xml-reports/*.xml"
+        sh "${checkmate} featureBaselineWorkflow"
+        sh "${checkmate} featureRevisionWorkflow"
+        junit allowEmptyResults: true, testResults: "build/test-groups/*/xml-reports/*.xml"
       }
+       post {
+          always {
+             junit allowEmptyResults: true, testResults: "build/test-groups/*/xml-reports/*.xml"
+             archiveArtifacts artifacts: 'build/distributions/*.zip', fingerprint: true, allowEmptyArchive: true
+             sh "$checkmate producer"
+          }
+       }
     }
 
     stage('New Release') {
@@ -75,8 +85,8 @@ pipeline {
 
   post {
     always {
-      archive "obiee/**/build/distributions/*"
-      sh "${checkmate} -p ${projectDir} analytics"
+      archiveArtifacts artifacts: 'build/distributions/*.zip', fingerprint: true, allowEmptyArchive: true
+      sh "${checkmate} producer"
     }
   }
 }
