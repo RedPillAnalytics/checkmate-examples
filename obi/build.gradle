@@ -1,7 +1,7 @@
 plugins {
-  id 'com.redpillanalytics.checkmate.obi' version "10.1.4"
-  id 'com.avast.gradle.docker-compose' version "0.8.14"
-  id 'com.adarshr.test-logger' version "1.6.0"
+  id 'com.redpillanalytics.checkmate.obi' version "12.0.12"
+  id 'com.avast.gradle.docker-compose' version "0.13.2"
+  id 'com.adarshr.test-logger' version "2.1.0"
 }
 
 dockerCompose {
